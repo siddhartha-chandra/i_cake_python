@@ -3,53 +3,25 @@
 
 # The input list_of_ints will always have at least three integers
 
-def get_min(a, b):
-    if a is None:
-        return b
-    elif b is None:
-        return a
-    else:
-        min(a, b)
-
-def place_element_and_calculate(element):
-    global highest, lowest, lowest_product_2, highest_product_2, highest_product
-    if highest is None:
-        highest = element
-    elif lowest is None:
-        highest_product_2 = highest * element
-        lowest = min(highest, element)
-        highest = max(highest, element)
-    else:
-        if highest_product is None:
-            highest_product = element * highest_product_2
-        elif element * highest_product_2 > highest_product:
-            lowest_product_2 = get_min(highest_product_2, lowest_product_2)
-            highest_product = element * highest_product_2
-            highest_product_2 = max(highest_product_2, element * highest)
-            lowest = min(lowest, highest)
-            highest = max(element, highest)
-        else:
-            if element * lowest > highest_product_2:
-                lowest_product_2 = get_min(highest_product_2, lowest_product_2)
-                highest_product_2 = element * lowest
-                highest_product = highest * highest_product_2
-            else:
-                lowest_product_2 = element * lowest
-            lowest = min(lowest, element)
-
-def my_function(ls):
+def highest_product(ls):
     print 'running with %s' % ls
-    for element in ls:
-        place_element_and_calculate(element)
+    if len(ls) < 3:
+        raise Exception('Less than 3 items!')
+    highest = max(ls[0], ls[1])
+    lowest = min(ls[0], ls[1])
+    highest_product_2 = highest * lowest
+    lowest_product_2 = highest * lowest
+    highest_product = highest_product_2 * ls[2]
+    for element in ls[2:]:
+        highest_product = max(highest_product, element * lowest_product_2,
+                              element * highest_product_2)
+        highest_product_2 = max(highest_product_2, element * lowest,
+                                element * highest)
+        lowest_product_2 = min(lowest_product_2, element * lowest,
+                               element * highest)
+        highest = max(element, highest)
+        lowest = min(element, lowest)
     return highest_product
-
-
-# run your function through some test cases here
-# remember: debugging is half the battle!
-highest = None
-lowest = None
-highest_product_2 = None
-lowest_product_2 = None
-highest_product = None
+    
 ls = [-10, -10, 1, 3, 2]
-print my_function(ls)
+print highest_product(ls)
