@@ -106,19 +106,26 @@ class Change:
                     amount_left, denominations, current_index + 1
                     )
                 )
-            # print 'subtracting current coin %s from %s %s\n' % (current_coin,
-            #                                                     amount_left,
-            #                                                     denominations[
-            #                                                       current_index:
-            #                                                    ])
             amount_left -= current_coin
         self.memo[memo_key] = num_possibilities
         return num_possibilities
+
+
+# Approach 4: bottom-up
+def change_possibilities_bottom_up(amount, denominations):
+    ways_of_doing_n_cents = [0] * (amount + 1)
+    ways_of_doing_n_cents[0] = 1
+    for coin in denominations:
+        for higher_amount in xrange(coin, amount + 1):
+            higher_amount_remainder = higher_amount - coin
+            ways_of_doing_n_cents[higher_amount] += ways_of_doing_n_cents[higher_amount_remainder]
+    return ways_of_doing_n_cents[amount]
 
 
 money = 5
 denominations = [1,3,5]
 # res = calculate_change(money, sorted(denominations, reverse=True)))
 # res = change_possibilities_top_down(money, denominations)
-res = Change().change_possibilities_top_down(money, denominations)
+# res = Change().change_possibilities_top_down(money, denominations)
+res = change_possibilities_bottom_up(money, denominations)
 print "Number of ways to make change for %s is %s" % (money, res)
