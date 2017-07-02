@@ -39,12 +39,34 @@ def get_min_max(node, min_depth=None, max_depth=0, depth=0):
         min_r, max_r = get_min_max(node.right, min_l, max_l, depth + 1)
         return min_r, max_r
 
-def check_suberbalance(node):
+def check_suberbalance_recursive(node):
     minim, maxim = get_min_max(node)
     if maxim - minim > 1:
         print "Not a superbalanced tree!"
     else:
         print "Super-balanced tree...yay!"
+
+
+def check_suberbalance_iterative(root_node):
+    if root_node == None:
+        return True
+
+    depths = []
+    nodes = []
+    nodes.append((root_node, 0))
+    while len(nodes):
+        node, depth = nodes.pop()
+        if (not node.left)and (not node.right):
+            if depth not in depths:
+                depths.append(depth)
+                if (len(depths) > 2) or ( (len(depths) == 2) and abs(depths[0] - depths[1]) > 1):
+                    return False
+        else:
+            if node.left:
+                nodes.append((node.left, depth + 1))
+            if node.right:
+                nodes.append((node.right, depth + 1))
+    return True
 
 # create a binary tree
 root = BinaryTreeNode(10)
@@ -52,4 +74,5 @@ l2 = root.insert_left(5).insert_left(2)
 l2.insert_right(4)
 root.insert_right(15)
 
-check_suberbalance(root)
+# check_suberbalance_recursive(root)
+print "is super-balanced: %s" % check_suberbalance_iterative(root)
