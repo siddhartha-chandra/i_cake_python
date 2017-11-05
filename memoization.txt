@@ -1,0 +1,109 @@
+Memoization
+
+Memoization ensures that a function doesn't run for the same inputs more than once by keeping a record of the results for the given inputs (usually in a dictionary).
+
+For example, a simple recursive function for computing the nnth Fibonacci number:
+
+  def fib_recursive(n):
+
+    if n < 0:
+        raise IndexError('Index was negative. No such thing as a negative index in a series.')
+
+    # base cases
+    if n in [0, 1]:
+        return n
+
+    print "computing fib_recursive(%i)" % n
+    return fib_recursive(n - 1) + fib_recursive(n - 2)
+
+Will run on the same inputs multiple times:
+
+  >>> fib_recursive(8)
+computing fib_recursive(8)
+computing fib_recursive(7)
+computing fib_recursive(6)
+computing fib_recursive(5)
+computing fib_recursive(4)
+computing fib_recursive(3)
+computing fib_recursive(2)
+computing fib_recursive(2)
+computing fib_recursive(3)
+computing fib_recursive(2)
+computing fib_recursive(4)
+computing fib_recursive(3)
+computing fib_recursive(2)
+computing fib_recursive(2)
+computing fib_recursive(5)
+computing fib_recursive(4)
+computing fib_recursive(3)
+computing fib_recursive(2)
+computing fib_recursive(2)
+computing fib_recursive(3)
+computing fib_recursive(2)
+computing fib_recursive(6)
+computing fib_recursive(5)
+computing fib_recursive(4)
+computing fib_recursive(3)
+computing fib_recursive(2)
+computing fib_recursive(2)
+computing fib_recursive(3)
+computing fib_recursive(2)
+computing fib_recursive(4)
+computing fib_recursive(3)
+computing fib_recursive(2)
+computing fib_recursive(2)
+21
+We can imagine the recursive calls of this function as a tree, where the two children of a node are the two recursive calls it makes. We can see that the tree quickly branches out of control:
+
+A binary tree showing the recursive calls of calling fib of 5. Every fib of n call calls fib of n minus 1 and fib of n minus 2. So calling fib of 5 calls fib of 4 and fib of 3, which keep calling fib of lower numbers until reaching the base cases fib of 1 or fib of 0.
+To avoid the duplicate work caused by the branching, we can wrap the function in a class with an attribute, memo, that maps inputs to outputs. Then we simply:
+
+Check memo to see if we can avoid computing the answer for any given input, and
+Save the results of any calculations to memo.
+  class Fibber:
+
+    def __init__(self):
+        self.memo = {}
+
+    def fib(self, n):
+
+        if n < 0:
+            raise Exception("Index was negative. No such thing as a negative index in a series.")
+
+        # base cases
+        elif n in [0, 1]:
+            return n
+
+        # see if we've already calculated this
+        if n in self.memo:
+            print "grabbing memo[%i]" % n
+            return self.memo[n]
+
+        print "computing fib(%i)" % n
+        result = self.fib(n - 1) + self.fib(n - 2)
+
+        # memoize
+        self.memo[n] = result
+
+        return result
+
+We save a bunch of calls by checking the memo:
+
+  >>> Fibber().fib(8)
+computing fib(8)
+computing fib(7)
+computing fib(6)
+computing fib(5)
+computing fib(4)
+computing fib(3)
+computing fib(2)
+grabbing memo[2]
+grabbing memo[3]
+grabbing memo[4]
+grabbing memo[5]
+grabbing memo[6]
+21
+Now in our recurrence tree, no node appears more than twice:
+
+A binary tree showing the memos and recursive calls of calling fib of 5. Starting with the calls for fib of n minus 1, fib of 5 calls fib of 4, which calls fib of 3, which calls fib of 2, which calls fib of 1. then, for the fib of n minus 2 calls, fib of 5 gets the memo fib of 3, fib of 4 gets the memo fib of 2, fib of 3 gets the memo fib of 1, and fib of 2 calls fib of 0.
+Memoization is a common strategy for dynamic programming problems, which are problems where the solution is composed of solutions to the same problem with smaller inputs (as with the Fibonacci problem, above). The other common strategy for dynamic programming problems is going bottom-up, which is usually cleaner and often more efficient.
