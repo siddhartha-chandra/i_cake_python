@@ -19,9 +19,6 @@ class LinkedListNode:
 
 
 def reverse(head):
-    if not head or not head.next:
-        return head
-
     previous = None
     current = head
     while current:
@@ -36,8 +33,8 @@ def reverse(head):
 a = LinkedListNode('A')
 b = LinkedListNode('B')
 c = LinkedListNode('C')
-# a.next = b
-# b.next = c
+a.next = b
+b.next = c
 
 a.display()
 rev_head = reverse(a)
